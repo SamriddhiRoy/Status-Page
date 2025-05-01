@@ -1,33 +1,41 @@
-// backend/controllers/feedController.js
+const SavedFeed = require('../models/SavedFeed');
 const User = require('../models/User');
 
 const saveFeed = async (req, res) => {
-  const { postId, title, url, source } = req.body;
-
-  console.log("Saving feed with postId:", postId); // Add logging here
-
   try {
-    const user = await User.findById(req.user.id);
+    const { postId, title, url, source } = req.body;
+    const userId = req.user.id;
+    
+    // Get the user's email from the database if not in token
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
-    // Log current saved feeds
-    console.log("Current saved feeds:", user.savedFeeds);
+    const savedFeed = new SavedFeed({
+      userId,
+      postId,
+      title,
+      url,
+      source,
+      userEmail: user.email // Use the email from the user document
+    });
 
-    const alreadySaved = user.savedFeeds.find(f => f.postId === postId);
-    if (alreadySaved) return res.status(400).json({ error: "Already saved" });
+    await savedFeed.save();
 
-    // Push the feed to savedFeeds array
-    user.savedFeeds.push({ postId, title, url, source });
+    await User.findByIdAndUpdate(
+      userId,
+      { $addToSet: { savedFeeds: savedFeed._id } },
+      { new: true }
+    );
 
-    // Reward credits for saving a feed
-    user.credits += 5;
-    await user.save();
-
-    console.log("Feed saved successfully! Updated credits:", user.credits); // Add logging here
-
-    res.json({ message: "Feed saved", credits: user.credits });
-  } catch (err) {
-    console.log("Error saving feed:", err); // Add error logging
-    res.status(500).json({ error: "Failed to save feed" });
+    res.status(201).json(savedFeed);
+  } catch (error) {
+    console.error('Error saving feed:', error);
+    res.status(500).json({ 
+      error: 'Failed to save feed',
+      details: error.message 
+    });
   }
 };
 
