@@ -9,7 +9,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/feed', require('./routes/feed')); // Keep this line
+app.use('/api/feed', require('./routes/feed'));
+app.use('/api/user', require('./routes/user')); // Add this line
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))

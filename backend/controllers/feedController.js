@@ -5,31 +5,49 @@ const saveFeed = async (req, res) => {
   try {
     const { postId, title, url, source } = req.body;
     const userId = req.user.id;
-    
-    // Get the user's email from the database if not in token
+
+    // Check if feed already exists first
+    const existingFeed = await SavedFeed.findOne({ userId, postId });
+    if (existingFeed) {
+      return res.status(200).json({ 
+        message: 'Feed already saved',
+        feed: existingFeed 
+      });
+    }
+
+    // Get current user with credits
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Create and save new feed
     const savedFeed = new SavedFeed({
       userId,
       postId,
       title,
       url,
       source,
-      userEmail: user.email // Use the email from the user document
+      userEmail: user.email
     });
-
     await savedFeed.save();
 
-    await User.findByIdAndUpdate(
+    // Update user with new feed and increment credits
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { $addToSet: { savedFeeds: savedFeed._id } },
+      {
+        $addToSet: { savedFeeds: savedFeed._id },
+        $inc: { credits: 5 } // This increments credits by 5
+      },
       { new: true }
     );
 
-    res.status(201).json(savedFeed);
+    res.status(201).json({
+      message: 'Feed saved successfully! +5 credits',
+      feed: savedFeed,
+      newCredits: updatedUser.credits
+    });
+
   } catch (error) {
     console.error('Error saving feed:', error);
     res.status(500).json({ 

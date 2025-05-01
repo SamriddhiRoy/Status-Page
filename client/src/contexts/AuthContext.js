@@ -7,20 +7,25 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   
+  // Load user when token exists
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      axios.get('http://localhost:5000/api/auth/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      }).then(response => {
-        setUser(response.data);
-        setLoading(false);
-      }).catch(() => {
-        setLoading(false);
-      });
-    } else {
+    const loadUser = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const response = await axios.get('http://localhost:5000/api/auth/me', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          setUser(response.data);
+        } catch (error) {
+          console.error("Error loading user:", error);
+          localStorage.removeItem('token'); // Clear invalid token
+        }
+      }
       setLoading(false);
-    }
+    };
+
+    loadUser();
   }, []);
 
   const login = (token, userData) => {
@@ -33,8 +38,25 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // New function to update user data
+  const updateUser = (updatedData) => {
+    setUser(prevUser => ({
+      ...prevUser,
+      ...updatedData
+    }));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        loading, 
+        login, 
+        logout,
+        setUser, // Direct setter
+        updateUser // Partial updater
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

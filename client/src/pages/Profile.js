@@ -1,84 +1,102 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useContext } from 'react';
 import AuthContext from '../contexts/AuthContext';
 
 const Profile = () => {
-  const { user, setUser } = useContext(AuthContext);
-  const [name, setName] = useState(user?.name || '');
-  const [email, setEmail] = useState(user?.email || '');
+  const { user, updateUser } = useContext(AuthContext);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) {
-      window.location.href = '/login'; // Redirect to login if user is not logged in
+    if (user) {
+      setName(user.name || '');
+      setEmail(user.email || '');
     }
   }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
     try {
       const response = await axios.put(
-        '/api/user/update', // Your API endpoint to update user details
-        { name, email, password },
-        { headers: { Authorization: `Bearer ${user.token}` } }
+        'http://localhost:5000/api/user/update',
+        { name, email, password: password || undefined },
+        { 
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('token')}` 
+          } 
+        }
       );
 
-      // Assuming the response contains updated user data
-      setUser(response.data.user);
-      alert('Profile updated successfully!');
+      updateUser(response.data.user);
+      setSuccess('Profile updated successfully!');
+      setPassword('');
     } catch (err) {
-      setError('Failed to update profile.');
+      setError(err.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
     }
   };
 
+  if (!user) {
+    return <div>Please log in to view your profile.</div>;
+  }
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Profile</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <div className="max-w-md mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Edit Profile</h1>
+      
+      {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
+      {success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">{success}</div>}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="name" className="block text-lg">Name</label>
+          <label className="block mb-1">Name</label>
           <input
             type="text"
-            id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="mt-2 p-2 w-full border border-gray-300 rounded"
+            className="w-full p-2 border rounded"
             required
           />
         </div>
+        
         <div>
-          <label htmlFor="email" className="block text-lg">Email</label>
+          <label className="block mb-1">Email</label>
           <input
             type="email"
-            id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-2 p-2 w-full border border-gray-300 rounded"
+            className="w-full p-2 border rounded"
             required
           />
         </div>
+        
         <div>
-          <label htmlFor="password" className="block text-lg">Password (optional)</label>
+          <label className="block mb-1">New Password (leave blank to keep current)</label>
           <input
             type="password"
-            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-2 p-2 w-full border border-gray-300 rounded"
+            className="w-full p-2 border rounded"
+            placeholder="••••••••"
           />
         </div>
-        <div className="mt-4">
-          <button
-            type="submit"
-            className="p-2 bg-blue-500 text-white rounded"
-          >
-            Update Profile
-          </button>
-        </div>
+        
+        <button
+          type="submit"
+          disabled={loading}
+          className={`w-full py-2 px-4 rounded text-white ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+        >
+          {loading ? 'Updating...' : 'Update Profile'}
+        </button>
       </form>
     </div>
   );

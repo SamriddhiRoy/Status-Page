@@ -8,7 +8,6 @@ const FeedSchema = new mongoose.Schema({
   source: String,
 });
 
-// Then define UserSchema
 const UserSchema = new mongoose.Schema({
   name: String,
   email: { type: String, unique: true },
@@ -19,9 +18,15 @@ const UserSchema = new mongoose.Schema({
   lastLogin: Date,
   savedFeeds: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'SavedFeed'
+    ref: 'SavedFeed',
+    validate: {
+      validator: function(v) {
+        return mongoose.Types.ObjectId.isValid(v);
+      },
+      message: props => `${props.value} is not a valid ObjectId!`
+    }
   }]
-});
+}, { timestamps: true });
 
 // Create and export the User model
 const User = mongoose.model('User', UserSchema);
