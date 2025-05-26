@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Input from "../components/ui/input";  // Corrected import for default export
-import Button from "../components/ui/button";  // Corrected import for default export
+import Input from "../components/ui/input";  
+import Button from "../components/ui/button";  
 
 import { useNavigate } from "react-router-dom";
 
@@ -14,8 +14,8 @@ const Login = () => {
     setError("");
 
     try {
-      // src/pages/Login.js
-const res = await fetch("http://localhost:8001/auth/login", { // Changed to 8001
+     
+const res = await fetch("http://localhost:8001/auth/login", { 
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ email, password }),
@@ -30,7 +30,7 @@ const res = await fetch("http://localhost:8001/auth/login", { // Changed to 8001
 
       console.log("Login successful, navigating to /dashboard");
 
-      // Ensure navigation happens after state updates
+    
       setTimeout(() => {
         navigate("/dashboard");
       }, 0);

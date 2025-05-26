@@ -29,7 +29,7 @@ const MemberList = ({ orgId }) => {
         organization_id: orgId,
       });
       setEmail("");
-      fetchMembers(); // Refresh the member list
+      fetchMembers(); 
     } catch (error) {
       console.error("Failed to add member:", error);
     }
@@ -37,14 +37,13 @@ const MemberList = ({ orgId }) => {
 
  const handleUpdateRole = async (memberId, newRole) => {
   try {
-    // THIS IS THE CRUCIAL CHANGE:
-    // Send an object with the 'role' key in the request body.
+    
     await axios.put(`http://localhost:8001/organizations/members/${memberId}`, { role: newRole });
     
-    fetchMembers(); // Refresh the member list to reflect role change
+    fetchMembers(); 
   } catch (error) {
     console.error("Failed to update role:", error);
-    // You might want to add more user-friendly error handling here
+
   }
 };
 
@@ -52,9 +51,9 @@ const MemberList = ({ orgId }) => {
 
   const handleDeleteMember = async (memberId) => {
     try {
-      // Send DELETE request to remove member from the organization
+    
       await axios.delete(`http://localhost:8001/organizations/members/${memberId}`);
-      fetchMembers(); // Refresh the member list
+      fetchMembers(); 
     } catch (error) {
       console.error("Failed to delete member:", error);
     }

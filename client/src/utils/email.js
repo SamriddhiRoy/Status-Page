@@ -2,14 +2,14 @@ import emailjs from "emailjs-com";
 
 export function sendEmail(to_email, subject, message) {
   emailjs.send(
-    "service_a3ubtln", // ✅ Your EmailJS Service ID
-    "template_ef5rfrb", // ❗ Replace with your EmailJS Template ID
+    "service_a3ubtln", 
+    "template_ef5rfrb", 
     {
       to_email,
       subject,
       message,
     },
-    "X2AdJAfMlruyyGzgb" // ✅ Your EmailJS Public Key
+    "X2AdJAfMlruyyGzgb" 
   )
   .then((response) => {
     console.log("✅ Email sent successfully", response.status, response.text);

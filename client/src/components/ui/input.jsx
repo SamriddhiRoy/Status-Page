@@ -7,7 +7,7 @@ const Input = ({ label, type = 'text', className = '', ...props }) => {
       <input
         type={type}
         className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${className}`}
-        {...props} // This is the crucial part! It spreads all other props (like value, onChange, name, placeholder) to the native input element
+        {...props} 
       />
     </div>
   );

@@ -1,39 +1,39 @@
 import React from 'react';
-import { Doughnut } from 'react-chartjs-2'; // Changed from Line to Doughnut
+import { Doughnut } from 'react-chartjs-2'; 
 import {
   Chart as ChartJS,
-  ArcElement, // Needed for Doughnut chart
+  ArcElement, 
   Title,
   Tooltip,
   Legend,
 } from 'chart.js';
 
-// Registering the necessary parts of Chart.js for a Doughnut chart
+
 ChartJS.register(
-  ArcElement, // Register ArcElement for Doughnut
+  ArcElement, 
   Tooltip,
   Legend,
   Title
 );
 
 const UptimeGraph = ({ serviceData }) => {
-  // Calculate current overall operational percentage based on direct service objects
+  
   const totalServices = serviceData ? serviceData.length : 0;
-  // Filter for services explicitly 'Operational'
+  
   const operationalServices = serviceData ? serviceData.filter(s => s.status === 'Operational').length : 0;
   
   const currentUptimePercentage = totalServices > 0 ? (operationalServices / totalServices) * 100 : 0;
   const downtimePercentage = 100 - currentUptimePercentage;
 
-  // Data for the Doughnut chart
+  
   const data = {
-    labels: ['Operational', 'Non-Operational'], // Labels for the segments
+    labels: ['Operational', 'Non-Operational'], 
     datasets: [
       {
-        data: [currentUptimePercentage, downtimePercentage], // Uptime and Downtime percentages
+        data: [currentUptimePercentage, downtimePercentage], 
         backgroundColor: [
-          'rgba(75, 192, 192, 0.8)', // Color for Operational (teal/greenish)
-          'rgba(255, 99, 132, 0.8)',  // Color for Non-Operational (red)
+          'rgba(75, 192, 192, 0.8)', 
+          'rgba(255, 99, 132, 0.8)',  
         ],
         borderColor: [
           'rgba(75, 192, 192, 1)',
@@ -44,14 +44,14 @@ const UptimeGraph = ({ serviceData }) => {
     ],
   };
 
-  // Options for the Doughnut chart
+  
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Allows the chart to fill its container
-    cutout: '70%', // Adjusts the size of the hole in the doughnut
+    maintainAspectRatio: false, 
+    cutout: '70%', 
     plugins: {
       legend: {
-        position: 'bottom', // Move legend to bottom for cleaner look
+        position: 'bottom', 
         labels: {
           font: {
             size: 14
@@ -63,9 +63,9 @@ const UptimeGraph = ({ serviceData }) => {
   text: 'Overall System Status',
   font: {
     size: 22,
-    weight: '900' // Thicker font
+    weight: '900' 
   },
-  color: '#3B82F6', // Tailwind's text-blue-500 equivalent in hex
+  color: '#3B82F6', 
   padding: {
     top: 10,
     bottom: 20
@@ -81,7 +81,7 @@ const UptimeGraph = ({ serviceData }) => {
               label += ': ';
             }
             if (context.parsed !== null) {
-              label += context.parsed.toFixed(2) + '%'; // Format as percentage
+              label += context.parsed.toFixed(2) + '%'; 
             }
             return label;
           }
@@ -91,12 +91,12 @@ const UptimeGraph = ({ serviceData }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md mb-8 flex flex-col items-center"> {/* Center chart content */}
+    <div className="bg-white p-6 rounded-lg shadow-md mb-8 flex flex-col items-center"> 
       <h3 className="text-xl font-semibold mb-4 text-gray-800"></h3>
       {serviceData && serviceData.length > 0 ? (
-          <div className="relative h-64 w-64 md:h-80 md:w-80 flex items-center justify-center"> {/* Container for Doughnut */}
+          <div className="relative h-64 w-64 md:h-80 md:w-80 flex items-center justify-center"> 
               <Doughnut data={data} options={options} />
-              {/* Manually display the overall percentage in the center for a gauge-like look */}
+           
               <div className="absolute text-3xl font-bold text-gray-800">
                 {currentUptimePercentage.toFixed(1)}%
               </div>

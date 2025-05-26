@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { FaPlus, FaEdit, FaTrashAlt, FaSave, FaTimes, FaSpinner, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; // Added icons for better UX
+import { FaPlus, FaEdit, FaTrashAlt, FaSave, FaTimes, FaSpinner, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; 
 
 const OrganizationForm = () => {
   const [orgName, setOrgName] = useState("");
@@ -29,20 +29,20 @@ const OrganizationForm = () => {
     fetchOrgs();
   }, []);
 
-  // Helper to clear messages after some time
+
   useEffect(() => {
     if (successMessage || error) {
       const timer = setTimeout(() => {
         setSuccessMessage(null);
         setError(null);
-      }, 3000); // Clear after 3 seconds
+      }, 3000); 
       return () => clearTimeout(timer);
     }
   }, [successMessage, error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!orgName.trim()) { // Trim to prevent empty string submission
+    if (!orgName.trim()) { 
       setError("Organization name cannot be empty.");
       return;
     }
@@ -72,7 +72,7 @@ const OrganizationForm = () => {
     setSuccessMessage(null);
     try {
       await axios.put(`http://localhost:8001/organizations/${orgId}`, { name: editOrgName });
-      setSelectedOrgId(null); // Hide edit form after save
+      setSelectedOrgId(null); 
       setEditOrgName("");
       setSuccessMessage("Organization updated successfully!");
       fetchOrgs();
@@ -86,7 +86,7 @@ const OrganizationForm = () => {
 
   const handleDeleteOrg = async (orgId) => {
     if (!window.confirm("Are you sure you want to delete this organization? This action cannot be undone.")) {
-      return; // User cancelled
+      return; 
     }
     setIsLoading(true);
     setError(null);
@@ -109,7 +109,7 @@ const OrganizationForm = () => {
   ✨ Organization Management
 </h2>
 
-      {/* Loading, Success, Error Messages */}
+      
       {isLoading && (
         <div className="flex items-center justify-center bg-blue-100 text-blue-700 p-3 rounded-lg mb-4 shadow-md">
           <FaSpinner className="animate-spin mr-2 text-xl" />
@@ -129,7 +129,7 @@ const OrganizationForm = () => {
         </div>
       )}
 
-      {/* Create Organization Form */}
+     
       <div className="mb-8 p-6 bg-white rounded-lg shadow-md border border-gray-200">
         <h3 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
           <FaPlus className="mr-2 text-blue-500" /> Create New Organization
@@ -154,7 +154,7 @@ const OrganizationForm = () => {
         </form>
       </div>
 
-      {/* List Organizations */}
+   
       <div className="p-6 bg-white rounded-lg shadow-md border border-gray-200">
         <h3 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
           <FaEdit className="mr-2 text-indigo-500" /> Your Existing Organizations
@@ -177,7 +177,7 @@ const OrganizationForm = () => {
                       {selectedOrgId === org.id ? (
                         <button
                           onClick={() => {
-                            setSelectedOrgId(null); // Cancel editing
+                            setSelectedOrgId(null); 
                             setEditOrgName("");
                           }}
                           className="bg-gray-400 text-white px-3 py-1 rounded-md hover:bg-gray-500 transition duration-200 flex items-center"

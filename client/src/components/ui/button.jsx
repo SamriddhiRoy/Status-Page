@@ -11,4 +11,4 @@ const Button = ({ children, onClick, className }) => {
   );
 };
 
-export default Button; // Ensure this is default export
+export default Button; 
