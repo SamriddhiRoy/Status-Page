@@ -1,25 +1,26 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import Home from './pages/Home';
-import Navbar from './components/Navbar'; // Import Navbar component
-import Login from './pages/Login';
-import Register from './pages/Register';
-import Profile from './pages/Profile'; // Add Profile pag
-const App = () => {
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import ServiceManagement from "./pages/Services";
+import IncidentsPage from "./pages/Incidents";
+import Teams from "./pages/Teams"; // ✅ Import Teams page
+import PublicStatusPage from "./pages/PublicStatusPage"; 
+function App() {
+  console.log("App rendered");
   return (
-    <AuthProvider>
     <Router>
-      <Navbar /> {/* Render Navbar globally */}
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} /> {/* Add Profile route */}
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/services" element={<ServiceManagement />} />
+       <Route path="/incidents" element={<IncidentsPage />} />
+         <Route path="/teams" element={<Teams />} /> {/* ✅ New route */}
+      <Route path="/status" element={<PublicStatusPage />} />
       </Routes>
     </Router>
-  </AuthProvider>
   );
-};
+}
 
 export default App;
+

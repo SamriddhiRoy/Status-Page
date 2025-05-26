@@ -45,3 +45,24 @@
 .e-input-group:not(.e-float-icon-left), .e-input-group.e-success:not(.e-float-icon-left), .e-input-group.e-warning:not(.e-float-icon-left), .e-input-group.e-error:not(.e-float-icon-left), .e-input-group.e-control-wrapper:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-success:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-warning:not(.e-float-icon-left), .e-input-group.e-control-wrapper.e-error:not(.e-float-icon-left){
   border: none;
 }
+
+/* Button styles */
+.btn-primary {
+  @apply px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700;
+}
+.btn-danger {
+  @apply px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200;
+}
+.btn-warning {
+  @apply px-3 py-1 bg-yellow-100 text-yellow-800 rounded;
+}
+
+/* Badge styles */
+.badge-purple {
+  @apply px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs;
+}
+.badge-blue {
+  @apply px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs;
+}
+
+

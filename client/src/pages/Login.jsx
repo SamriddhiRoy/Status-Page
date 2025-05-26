@@ -1,43 +1,68 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
-import AuthContext from '../contexts/AuthContext';
+import React, { useState } from "react";
+import Input from "../components/ui/input";  // Corrected import for default export
+import Button from "../components/ui/button";  // Corrected import for default export
+
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("admin@example.com");
+  const [password, setPassword] = useState("admin123");
+  const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLogin = async () => {
+    setError("");
+
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
-      login(response.data.token, response.data.user);
-      window.location.href = '/';
+      // src/pages/Login.js
+const res = await fetch("http://localhost:8001/auth/login", { // Changed to 8001
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, password }),
+});
+
+      if (!res.ok) {
+        throw new Error("Invalid credentials");
+      }
+
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+
+      console.log("Login successful, navigating to /dashboard");
+
+      // Ensure navigation happens after state updates
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 0);
     } catch (err) {
-      console.error(err.response.data);
+      console.error("Login error:", err);
+      setError(err.message);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-200">
-      <form onSubmit={handleLogin} className="bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl mb-4">Login</h2>
-        <input 
-          type="email" 
-          placeholder="Email" 
-          className="p-2 mb-4 border border-gray-300 rounded" 
-          value={email} 
-          onChange={(e) => setEmail(e.target.value)} 
+    <div className="flex h-screen items-center justify-center">
+      <div className="w-full max-w-sm p-6 bg-white rounded-xl shadow">
+        <h2 className="text-2xl font-bold mb-4">Login</h2>
+        <Input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="mb-3"
         />
-        <input 
-          type="password" 
-          placeholder="Password" 
-          className="p-2 mb-4 border border-gray-300 rounded" 
-          value={password} 
-          onChange={(e) => setPassword(e.target.value)} 
+        <Input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="mb-3"
         />
-        <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded">Login</button>
-      </form>
+        {error && <p className="text-red-500 mb-2">{error}</p>}
+        <Button onClick={handleLogin} className="w-full">
+          Login
+        </Button>
+      </div>
     </div>
   );
 };
