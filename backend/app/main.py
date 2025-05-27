@@ -1,11 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.routers import auth, services
 from app.incident import router as incident_router
 from app.organization import router as organization_router
 
 app = FastAPI()
+
+# Optional: Root route for sanity check
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Status Page API"}
 
 # CORS
 origins = [
@@ -22,7 +26,7 @@ app.add_middleware(
 )
 
 # Register routers
-app.include_router(auth.router)                # ✅ Login and auth routes
-app.include_router(services.router)            # ✅ Services CRUD
-app.include_router(incident_router)            # ✅ Incidents
-app.include_router(organization_router)        # ✅ Organizations
+app.include_router(auth.router)
+app.include_router(services.router)
+app.include_router(incident_router)
+app.include_router(organization_router)
