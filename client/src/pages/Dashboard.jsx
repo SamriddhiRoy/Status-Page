@@ -9,8 +9,10 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    axios.get('http://localhost:8001/services/')
+    axios.get(`${API_URL}/services/`)
       .then((res) => {
         setServices(res.data);
         setLoading(false);
@@ -20,14 +22,12 @@ const Dashboard = () => {
         setError("Failed to load services. Please try again later.");
         setLoading(false);
       });
-  }, []);
+  }, [API_URL]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-     
       <Sidebar />
 
-     
       <div className="lg:pl-64 transition-all duration-300">
         <Navbar />
 
@@ -50,7 +50,6 @@ const Dashboard = () => {
 
           {!loading && !error && (
             <>
-        
               <div className="bg-gray-50 p-6 rounded-2xl shadow-lg mb-8 max-w-4xl mx-auto border border-gray-300 hover:shadow-2xl transform transition duration-300 hover:scale-105">
                 <h2 className="text-2xl font-bold text-blue-600 mb-6 text-center hover:text-blue-800">
                   📊 Service Uptime Overview
@@ -64,7 +63,6 @@ const Dashboard = () => {
                 )}
               </div>
 
-           
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6 text-center">
                 🧩 Services Overview
               </h2>

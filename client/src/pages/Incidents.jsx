@@ -13,8 +13,9 @@ import emailjs from "emailjs-com";
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
-
 const IncidentManagement = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const [incidents, setIncidents] = useState([]);
   const [formIncident, setFormIncident] = useState({
     title: "",
@@ -34,7 +35,7 @@ const IncidentManagement = () => {
 
   const fetchIncidents = async () => {
     try {
-      const res = await axios.get("http://localhost:8001/incidents/");
+      const res = await axios.get(`${API_URL}/incidents/`);
       setIncidents(res.data);
     } catch (error) {
       console.error("Error fetching incidents:", error);
@@ -43,7 +44,7 @@ const IncidentManagement = () => {
 
   const fetchAvailableServices = async () => {
     try {
-      const response = await axios.get("http://localhost:8001/services/");
+      const response = await axios.get(`${API_URL}/services/`);
       setAvailableServices(response.data);
     } catch (error) {
       console.error("Error fetching available services:", error);
@@ -57,16 +58,19 @@ const IncidentManagement = () => {
 
   const handleSubmit = async () => {
     try {
+      const data = {
+        ...formIncident,
+        services: formIncident.services.map((s) => (typeof s === "object" ? s.value : s)),
+      };
+
       if (editingIncidentId) {
-        const response = await axios.put(`http://localhost:8001/incidents/${editingIncidentId}`, formIncident);
+        const response = await axios.put(`${API_URL}/incidents/${editingIncidentId}`, data);
         setIncidents((prev) =>
-          prev.map((incident) =>
-            incident.id === editingIncidentId ? response.data : incident
-          )
+          prev.map((incident) => (incident.id === editingIncidentId ? response.data : incident))
         );
         setEditingIncidentId(null);
       } else {
-        const response = await axios.post("http://localhost:8001/incidents/", formIncident);
+        const response = await axios.post(`${API_URL}/incidents/`, data);
         setIncidents((prev) => [...prev, response.data]);
       }
 
@@ -85,23 +89,22 @@ const IncidentManagement = () => {
   };
 
   const sendEmail = (to_email, subject, message) => {
-    emailjs.send(
-      "service_a3ubtln",
-      "template_ef5rfrb",
-      { to_email, subject, message },
-      "X2AdJAfMlruyyGzgb"
-    ).then((response) => {
-      alert("Email sent successfully!");
-    }).catch((error) => {
-      alert(`Failed to send email: ${error.text || error.message}`);
-    });
+    emailjs
+      .send(
+        "service_a3ubtln",
+        "template_ef5rfrb",
+        { to_email, subject, message },
+        "X2AdJAfMlruyyGzgb"
+      )
+      .then(() => alert("Email sent successfully!"))
+      .catch((error) => alert(`Failed to send email: ${error.text || error.message}`));
   };
 
   const startEditing = (incident) => {
     setEditingIncidentId(incident.id);
-    const serviceIds = incident.services.map(serviceName => {
-      const service = availableServices.find(s => s.name === serviceName);
-      return service ? service.id : serviceName;
+    const serviceIds = incident.services.map((serviceName) => {
+      const service = availableServices.find((s) => s.name === serviceName);
+      return service ? { value: service.id, label: service.name } : serviceName;
     });
 
     setFormIncident({
@@ -128,14 +131,14 @@ const IncidentManagement = () => {
 
   const deleteIncident = async (id) => {
     try {
-      await axios.delete(`http://localhost:8001/incidents/${id}`);
+      await axios.delete(`${API_URL}/incidents/${id}`);
       setIncidents((prev) => prev.filter((incident) => incident.id !== id));
     } catch (error) {
       alert(`Error deleting incident: ${error.message}`);
     }
   };
 
-  const serviceOptions = availableServices.map(service => ({
+  const serviceOptions = availableServices.map((service) => ({
     value: service.id,
     label: service.name,
   }));
