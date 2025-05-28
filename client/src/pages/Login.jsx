@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Input from "../components/ui/input";  
 import Button from "../components/ui/button";  
-
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
@@ -10,16 +9,17 @@ const Login = () => {
   const [password, setPassword] = useState("admin123");
   const [error, setError] = useState("");
 
+  const API_URL = process.env.REACT_APP_API_URL;
+
   const handleLogin = async () => {
     setError("");
 
     try {
-     
-const res = await fetch("http://localhost:8001/auth/login", { 
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ email, password }),
-});
+      const res = await fetch(`${API_URL}/auth/login`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
       if (!res.ok) {
         throw new Error("Invalid credentials");
@@ -30,7 +30,6 @@ const res = await fetch("http://localhost:8001/auth/login", {
 
       console.log("Login successful, navigating to /dashboard");
 
-    
       setTimeout(() => {
         navigate("/dashboard");
       }, 0);
