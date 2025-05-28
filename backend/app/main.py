@@ -1,6 +1,5 @@
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.routers import auth, services
 from app.incident import router as incident_router
 from app.organization import router as organization_router
@@ -9,13 +8,14 @@ app = FastAPI()
 
 # CORS
 origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:3000",  # Local development
+    "http://127.0.0.1:3000",  # Local development
+    "https://status-page-8ic3.vercel.app",  # Production frontend URL
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=origins,  # Now includes Vercel production URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -34,4 +34,4 @@ async def favicon():
 app.include_router(auth.router)                
 app.include_router(services.router)            
 app.include_router(incident_router)            
-app.include_router(organization_router)        
+app.include_router(organization_router)
