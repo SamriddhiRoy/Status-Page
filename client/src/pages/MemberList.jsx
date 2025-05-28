@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const MemberList = ({ orgId }) => {
   const [members, setMembers] = useState([]);
   const [email, setEmail] = useState("");
@@ -8,7 +10,7 @@ const MemberList = ({ orgId }) => {
 
   const fetchMembers = async () => {
     try {
-      const res = await axios.get(`http://localhost:8001/organizations/${orgId}/members`);
+      const res = await axios.get(`${API_URL}/organizations/${orgId}/members`);
       setMembers(res.data);
     } catch (error) {
       console.error("Failed to fetch members:", error);
@@ -22,43 +24,36 @@ const MemberList = ({ orgId }) => {
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8001/organizations/members/", {
+      await axios.post(`${API_URL}/organizations/members/`, {
         id: crypto.randomUUID(),
         user_email: email,
         role,
         organization_id: orgId,
       });
       setEmail("");
-      fetchMembers(); 
+      fetchMembers();
     } catch (error) {
       console.error("Failed to add member:", error);
     }
   };
 
- const handleUpdateRole = async (memberId, newRole) => {
-  try {
-    
-    await axios.put(`http://localhost:8001/organizations/members/${memberId}`, { role: newRole });
-    
-    fetchMembers(); 
-  } catch (error) {
-    console.error("Failed to update role:", error);
-
-  }
-};
-
-
+  const handleUpdateRole = async (memberId, newRole) => {
+    try {
+      await axios.put(`${API_URL}/organizations/members/${memberId}`, { role: newRole });
+      fetchMembers();
+    } catch (error) {
+      console.error("Failed to update role:", error);
+    }
+  };
 
   const handleDeleteMember = async (memberId) => {
     try {
-    
-      await axios.delete(`http://localhost:8001/organizations/members/${memberId}`);
-      fetchMembers(); 
+      await axios.delete(`${API_URL}/organizations/members/${memberId}`);
+      fetchMembers();
     } catch (error) {
       console.error("Failed to delete member:", error);
     }
   };
-
   return (
    <div className="p-6 bg-blue-50 shadow-lg rounded-lg mt-6 max-w-4xl mx-auto">
   <h3 className="text-2xl font-semibold text-blue-600 mb-6 text-center">

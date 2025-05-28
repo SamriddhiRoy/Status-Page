@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaPlus, FaEdit, FaTrashAlt, FaSave, FaTimes, FaSpinner, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa'; 
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const OrganizationForm = () => {
   const [orgName, setOrgName] = useState("");
   const [organizations, setOrganizations] = useState([]);
@@ -15,7 +17,7 @@ const OrganizationForm = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await axios.get("http://localhost:8001/organizations/");
+      const res = await axios.get(`${API_URL}/organizations/`);
       setOrganizations(res.data);
     } catch (err) {
       console.error("Failed to fetch organizations:", err);
@@ -29,20 +31,19 @@ const OrganizationForm = () => {
     fetchOrgs();
   }, []);
 
-
   useEffect(() => {
     if (successMessage || error) {
       const timer = setTimeout(() => {
         setSuccessMessage(null);
         setError(null);
-      }, 3000); 
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [successMessage, error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!orgName.trim()) { 
+    if (!orgName.trim()) {
       setError("Organization name cannot be empty.");
       return;
     }
@@ -50,7 +51,7 @@ const OrganizationForm = () => {
     setError(null);
     setSuccessMessage(null);
     try {
-      await axios.post("http://localhost:8001/organizations/", { name: orgName });
+      await axios.post(`${API_URL}/organizations/`, { name: orgName });
       setOrgName("");
       setSuccessMessage("Organization created successfully!");
       fetchOrgs();
@@ -71,8 +72,8 @@ const OrganizationForm = () => {
     setError(null);
     setSuccessMessage(null);
     try {
-      await axios.put(`http://localhost:8001/organizations/${orgId}`, { name: editOrgName });
-      setSelectedOrgId(null); 
+      await axios.put(`${API_URL}/organizations/${orgId}`, { name: editOrgName });
+      setSelectedOrgId(null);
       setEditOrgName("");
       setSuccessMessage("Organization updated successfully!");
       fetchOrgs();
@@ -86,13 +87,13 @@ const OrganizationForm = () => {
 
   const handleDeleteOrg = async (orgId) => {
     if (!window.confirm("Are you sure you want to delete this organization? This action cannot be undone.")) {
-      return; 
+      return;
     }
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
     try {
-      await axios.delete(`http://localhost:8001/organizations/${orgId}`);
+      await axios.delete(`${API_URL}/organizations/${orgId}`);
       setSuccessMessage("Organization deleted successfully!");
       fetchOrgs();
     } catch (err) {
@@ -102,7 +103,6 @@ const OrganizationForm = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-100 shadow-2xl rounded-xl max-w-3xl mx-auto mt-10 border border-blue-200">
       <h2 className="text-3xl font-extrabold text-blue-700 mb-8 text-center tracking-tight">

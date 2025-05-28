@@ -6,6 +6,8 @@ import Button from "../components/ui/button";
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const ServiceManagement = () => {
   const [services, setServices] = useState([]);
   const [formService, setFormService] = useState({ 
@@ -21,11 +23,10 @@ const ServiceManagement = () => {
 
   const fetchServices = async () => {
     try {
-      const response = await axios.get("http://localhost:8001/services");
+      const response = await axios.get(`${API_URL}/services`);
       setServices(response.data);
     } catch (error) {
       console.error("Error fetching services:", error);
-     
     }
   };
 
@@ -37,9 +38,8 @@ const ServiceManagement = () => {
   const handleSubmit = async () => {
     try {
       if (editingServiceId) {
-      
         const response = await axios.put(
-          `http://localhost:8001/services/${editingServiceId}`,
+          `${API_URL}/services/${editingServiceId}`,
           formService 
         );
         setServices((prev) =>
@@ -49,18 +49,15 @@ const ServiceManagement = () => {
         );
         setEditingServiceId(null);
       } else {
-      
         const response = await axios.post(
-          "http://localhost:8001/services",
+          `${API_URL}/services`,
           formService 
         );
         setServices((prev) => [...prev, response.data]);
       }
-   
       setFormService({ name: "", description: "", status: "Operational" });
     } catch (error) {
       console.error("Error submitting service:", error.response ? error.response.data : error.message);
-     
     }
   };
 
@@ -80,11 +77,10 @@ const ServiceManagement = () => {
 
   const deleteService = async (id) => {
     try {
-      await axios.delete(`http://localhost:8001/services/${id}`);
+      await axios.delete(`${API_URL}/services/${id}`);
       setServices((prev) => prev.filter((service) => service.id !== id));
     } catch (error) {
       console.error("Error deleting service:", error);
-   
     }
   };
 

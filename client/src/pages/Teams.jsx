@@ -5,6 +5,8 @@ import MemberList from "./MemberList";
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Teams = () => {
   const [organizations, setOrganizations] = useState([]);
   const [selectedOrgId, setSelectedOrgId] = useState(null);
@@ -12,7 +14,7 @@ const Teams = () => {
   useEffect(() => {
     const fetchOrgs = async () => {
       try {
-        const res = await axios.get("http://localhost:8001/organizations/");
+        const res = await axios.get(`${API_URL}/organizations/`);
         setOrganizations(res.data);
       } catch (error) {
         console.error("Failed to fetch organizations:", error);

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const statusColor = {
   operational: "bg-green-100 text-green-800",
   degraded: "bg-yellow-100 text-yellow-800",
@@ -11,8 +13,12 @@ const ServiceStatusList = () => {
   const [services, setServices] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8001/services/")
-      .then((res) => setServices(res.data));
+    axios
+      .get(`${API_URL}/services/`)
+      .then((res) => setServices(res.data))
+      .catch((error) => {
+        console.error("Failed to fetch services:", error);
+      });
   }, []);
 
   return (

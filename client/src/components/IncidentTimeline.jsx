@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const statusStyles = {
   resolved: "bg-green-100 text-green-700",
   investigating: "bg-yellow-100 text-yellow-700",
@@ -13,9 +15,14 @@ const IncidentTimeline = () => {
   const [incidents, setIncidents] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8001/incidents/").then((res) => {
-      setIncidents(res.data);
-    });
+    axios
+      .get(`${API_URL}/incidents/`)
+      .then((res) => {
+        setIncidents(res.data);
+      })
+      .catch((error) => {
+        console.error("Failed to fetch incidents:", error);
+      });
   }, []);
 
   return (
